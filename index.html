@@ -45,6 +45,12 @@ h1 span{display:block;color:var(--bus);font-size:.62em}
 .opt span{font-size:15px;opacity:.85}
 .close{margin-top:8px;padding:10px 18px;background:transparent;border:1px solid var(--line);color:var(--chalk);border-radius:6px;font:600 16px Barlow,sans-serif;cursor:pointer}
 .msg{margin-bottom:10px;color:var(--bus);font-weight:600}
+.avatar-layout{display:grid;grid-template-columns:130px 1fr;gap:16px;align-items:start}
+.avatar-preview{background:linear-gradient(#263b35,#101a17);border:1px solid var(--line);border-radius:8px;min-height:190px;display:grid;place-items:center;padding:10px}
+.avatar-preview svg{width:100%;max-height:190px}
+.section-label{color:var(--bus);font:400 21px Anton,sans-serif;margin:12px 0 7px}
+.opt small{display:block;font-size:12px;opacity:.75}
+@media(max-width:430px){.avatar-layout{grid-template-columns:90px 1fr}.avatar-preview{min-height:150px}.avatar-preview svg{max-height:150px}.card{padding:15px;max-height:90vh;overflow:auto}}
 input[type=range]{width:100%;accent-color:var(--bus)}
 #gate{position:fixed;inset:0;z-index:20;background:#0d1512;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;cursor:pointer}
 #gate p{font:600 20px Barlow,sans-serif;color:var(--bus);animation:pulse 1.6s infinite}
@@ -68,7 +74,8 @@ input[type=range]{width:100%;accent-color:var(--bus)}
     <button class="play" id="play">Play <small id="sub"></small></button>
     <button data-p="maps">Maps <small id="mapV"></small></button>
     <button data-p="diff">Difficulty <small id="diffV"></small></button>
-    <button data-p="load">Loadout <small>Rifle</small></button>
+    <button data-p="avatar">Customize Avatar <small>Hats · Shirts · Pants</small></button>
+  <button data-p="load">Loadout <small>Rifle · Pistol · Smoke</small></button>
     <button data-p="shop">Shop</button>
     <button onclick="location.href='schools3d.html'">Explore the schools in 3D</button>
     <button data-p="set">Settings</button>
@@ -139,7 +146,22 @@ show(0);startCycle();
 
 /* ---------- Game state + menu panels ---------- */
 const DIFFS=[["Easy","Fewer intruders, slow reactions"],["Normal","The standard school day"],["Hard","More intruders, better aim"],["Nightmare","Detention for life"]];
-const state={map:0,diff:1,cash:2450,weapon:"Rifle",owned:{Rifle:1}};
+const state={
+  map:0,diff:1,cash:2450,
+  avatar:{hat:"Baseball Cap",shirt:"Field Jacket",pants:"Cargo Pants"},
+  loadout:{primary:"Rifle",secondary:"Pistol",gadget:"Smoke Bomb"},
+  owned:{Rifle:1,Pistol:1,"Smoke Bomb":1}
+};
+const AVATAR_OPTIONS={
+  hat:["Baseball Cap","Beanie","Bucket Hat","Cowboy Hat","Hard Hat","Crown","No Hat"],
+  shirt:["Field Jacket","Hoodie","T-Shirt"],
+  pants:["Cargo Pants","Jeans","Track Pants"]
+};
+const GEAR_OPTIONS={
+  primary:[["Rifle","Standard rifle"]],
+  secondary:[["Pistol","Standard sidearm"]],
+  gadget:[["Smoke Bomb","Creates a smoke cloud"]]
+};
 const SHOP=[["Pistol",300],["Shotgun",900],["Sniper",1500],["Armor vest",600]];
 const $=id=>document.getElementById(id),card=$('card'),panel=$('panel');
 const fmt=n=>n.toLocaleString('en-US');
@@ -157,10 +179,39 @@ function diffP(){
   open('<h2>Difficulty</h2>'+DIFFS.map((d,i)=>`<button class="opt ${i===state.diff?'sel':''}" data-i="${i}">${d[0]}<span>${d[1]}</span></button>`).join(''));
   card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{state.diff=+b.dataset.i;refresh();diffP()});
 }
+function avatarSvg(){
+  const hats={"Baseball Cap":'<path d="M35 39 Q50 18 66 39 L76 43 L39 45Z" fill="#ffc21a"/><path d="M57 40 L80 45 L59 47Z" fill="#d99a00"/>',
+    "Beanie":'<path d="M35 42 Q35 18 51 20 Q68 20 68 42Z" fill="#b84b3a"/><path d="M35 40H68V46H35Z" fill="#e4d8bd"/>',
+    "Bucket Hat":'<path d="M37 28 L65 28 L70 43 L31 43Z" fill="#4c8c65"/><path d="M29 42H73V47H29Z" fill="#2e5c42"/>',
+    "Cowboy Hat":'<path d="M40 26 Q51 20 62 26 L67 41 L35 41Z" fill="#a96c3d"/><path d="M26 40 Q50 34 76 40 L73 45H29Z" fill="#7c4828"/>',
+    "Hard Hat":'<path d="M34 39 Q35 19 51 19 Q67 19 68 39Z" fill="#f5d442"/><path d="M29 39H73V45H29Z" fill="#d6a91b"/><path d="M48 20V38" stroke="#fff0a0" stroke-width="3"/>',
+    "Crown":'<path d="M34 28 L42 36 L51 22 L61 36 L69 28 L66 44H37Z" fill="#ffc21a" stroke="#f3efe2" stroke-width="1.5"/>',
+    "No Hat":""};
+  const shirts={"Field Jacket":"#526b4c","Hoodie":"#477a9b","T-Shirt":"#b84b3a"};
+  const pants={"Cargo Pants":"#8a805c","Jeans":"#41658a","Track Pants":"#333d45"};
+  return `<svg viewBox="0 0 100 160" role="img" aria-label="Avatar preview">
+    <ellipse cx="51" cy="151" rx="28" ry="5" fill="#000" opacity=".35"/>
+    <path d="M37 99 L34 143 L48 143 L51 111 L55 143 L69 143 L65 99Z" fill="${pants[state.avatar.pants]}"/>
+    <path d="M35 64 L24 70 L18 98 L28 101 L36 82 L36 111 L66 111 L66 82 L74 101 L84 97 L77 70 L65 64Z" fill="${shirts[state.avatar.shirt]}"/>
+    <path d="M36 65 L50 74 L65 65 L61 59 L40 59Z" fill="#d5a47a"/>
+    <rect x="40" y="42" width="22" height="25" rx="8" fill="#d5a47a"/>
+    <circle cx="44" cy="51" r="1.5" fill="#20231f"/><circle cx="57" cy="51" r="1.5" fill="#20231f"/>
+    <path d="M45 59 Q51 62 57 59" fill="none" stroke="#8b4d3c" stroke-width="1.5"/>
+    ${hats[state.avatar.hat]}
+    <path d="M36 143H49V149H33Z M55 143H69V149H54Z" fill="#1d2524"/>
+  </svg>`;
+}
+function avatarP(){
+  const options=(key,label)=>`<div class="section-label">${label}</div>`+AVATAR_OPTIONS[key].map(n=>`<button class="opt ${state.avatar[key]===n?'sel':''}" data-avatar="${key}" data-n="${n}">${n}<span>${state.avatar[key]===n?'Wearing':'Wear'}</span></button>`).join('');
+  open(`<h2>Customize Avatar</h2><div class="avatar-layout"><div class="avatar-preview" id="avatarPreview">${avatarSvg()}</div><div>${options('hat','Hats')}${options('shirt','Shirts')}${options('pants','Pants')}</div></div>`);
+  card.querySelectorAll('[data-avatar]').forEach(b=>b.onclick=()=>{state.avatar[b.dataset.avatar]=b.dataset.n;avatarP()});
+}
 function loadP(){
-  const w=Object.keys(state.owned);
-  open('<h2>Loadout</h2>'+w.map(n=>`<button class="opt ${n===state.weapon?'sel':''}" data-n="${n}">${n}<span>${n===state.weapon?'Equipped':'Equip'}</span></button>`).join(''));
-  card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{state.weapon=b.dataset.n;document.querySelector('[data-p=load] small').textContent=state.weapon;loadP()});
+  const labels={primary:"Primary Weapon",secondary:"Secondary Weapon",gadget:"Gadget"};
+  const groups=Object.keys(GEAR_OPTIONS).map(key=>`<div class="section-label">${labels[key]}</div>`+
+    GEAR_OPTIONS[key].map(([n,desc])=>`<button class="opt ${state.loadout[key]===n?'sel':''}" data-slot="${key}" data-n="${n}">${n}<span>${state.loadout[key]===n?'Equipped':'Equip'}</span><small>${desc}</small></button>`).join('')).join('');
+  open(`<h2>Loadout</h2><p class="msg">Choose your gear for the next match.</p>${groups}`);
+  card.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{state.loadout[b.dataset.slot]=b.dataset.n;loadP();document.querySelector('[data-p=load] small').textContent=state.loadout.primary+' · '+state.loadout.secondary+' · Smoke'});
 }
 function shopP(msg=''){
   open('<h2>Shop</h2>'+(msg?`<p class="msg">${msg}</p>`:'')+SHOP.map(([n,p])=>`<button class="opt" data-n="${n}" data-p="${p}">${n}<span>${state.owned[n]?'Owned':'$'+fmt(p)}</span></button>`).join(''));
@@ -175,9 +226,9 @@ function setP(){
   open(`<h2>Settings</h2><p class="msg">Music volume</p><input type="range" id="vol" min="0" max="100" value="${Math.round(vol*100)}">`);
   $('vol').oninput=e=>{vol=e.target.value/100;if(master)master.gain.value=muted?0:vol}
 }
-const P={maps:mapsP,diff:diffP,load:loadP,shop:()=>shopP(),set:setP};
+const P={maps:mapsP,diff:diffP,load:loadP,avatar:avatarP,shop:()=>shopP(),set:setP};
 document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>P[b.dataset.p]());
-$('play').onclick=()=>open(`<h2>Finding a match…</h2><p class="msg">${SCHOOLS[state.map].name} · ${DIFFS[state.diff][0]} · ${state.weapon}</p><p>The game itself isn't built yet. Hook your match start here.</p>`);
+$('play').onclick=()=>open(`<h2>Finding a match…</h2><p class="msg">${SCHOOLS[state.map].name} · ${DIFFS[state.diff][0]} · ${state.loadout.primary} · ${state.loadout.secondary} · ${state.loadout.gadget}</p><p>The game itself isn't built yet. Hook your match start here.</p>`);
 refresh();
 
 /* ---------- Lobby music (generated live with Web Audio) ---------- */
