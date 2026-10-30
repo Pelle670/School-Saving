@@ -1,276 +1,270 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Save the School – Lobby</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@500;600&display=swap" rel="stylesheet">
-<style>
-:root{--chalk:#f3efe2;--bus:#ffc21a;--ink:#101a17;--panel:rgba(14,24,21,.82);--line:rgba(243,239,226,.22)}
-*{box-sizing:border-box;margin:0}
-html,body{height:100%;background:#000;color:var(--chalk);font-family:Barlow,system-ui,sans-serif;overflow:hidden}
-#bg{position:fixed;inset:0}
-#bg svg{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .01s}
-#bg svg.on{opacity:1}
-.shade{position:fixed;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,.25),rgba(0,0,0,.7));pointer-events:none}
-.lid{position:fixed;left:0;right:0;height:0;background:#000;z-index:5;pointer-events:none}
-.lid.t{top:0}.lid.b{bottom:0}
-.blink .lid{animation:lid .5s ease-in-out}
-@keyframes lid{0%{height:0}45%,55%{height:52%}100%{height:0}}
-#money{position:fixed;top:18px;right:22px;z-index:3;display:flex;align-items:center;gap:10px;background:var(--panel);border:2px solid var(--bus);border-radius:40px;padding:8px 20px 8px 10px;font:600 22px Barlow,sans-serif}
-#money i{width:30px;height:30px;border-radius:50%;background:var(--bus);color:var(--ink);display:grid;place-items:center;font:normal 18px Anton,sans-serif;font-style:normal}
-#mute{position:fixed;top:22px;left:22px;z-index:3;background:var(--panel);border:1px solid var(--line);color:var(--chalk);border-radius:8px;padding:9px 14px;font:600 15px Barlow,sans-serif;cursor:pointer}
-main{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:70px 16px 70px}
-h1{font:400 clamp(54px,9vw,120px)/.9 Anton,Impact,sans-serif;text-align:center;letter-spacing:.01em;text-shadow:0 4px 0 #000,0 0 40px rgba(0,0,0,.6);transform:rotate(-2deg)}
-h1 span{display:block;color:var(--bus);font-size:.62em}
-.menu{display:flex;flex-direction:column;gap:10px;width:min(360px,92vw)}
-.menu button{font:600 20px Barlow,sans-serif;color:var(--chalk);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:13px 18px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;transition:transform .12s,background .12s,border-color .12s}
-.menu button:hover,.menu button:focus-visible{transform:translateX(6px);border-color:var(--bus);outline:none}
-.menu button small{font-size:15px;color:var(--bus);font-weight:600}
-.menu .play{background:var(--bus);color:var(--ink);font:400 38px Anton,sans-serif;padding:14px 20px;border:0;letter-spacing:.03em}
-.menu .play small{color:var(--ink);font:600 15px Barlow,sans-serif;text-align:right}
-.menu .play:hover{background:#ffd54d}
-#cap{position:fixed;left:22px;bottom:22px;z-index:3;font:600 18px Barlow,sans-serif;background:var(--panel);padding:8px 14px;border-radius:6px;border-left:4px solid var(--bus)}
-#dots{position:fixed;right:22px;bottom:30px;z-index:3;display:flex;gap:8px}
-#dots b{width:26px;height:5px;background:var(--line);border-radius:3px}
-#dots b.on{background:var(--bus)}
-#panel{position:fixed;inset:0;z-index:6;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px}
-#panel.open{display:flex}
-.card{background:#14211d;border:1px solid var(--line);border-top:5px solid var(--bus);border-radius:8px;width:min(480px,100%);padding:22px}
-.card h2{font:400 34px Anton,sans-serif;margin-bottom:14px}
-.opt{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px 14px;margin-bottom:8px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--chalk);font:600 18px Barlow,sans-serif;cursor:pointer;text-align:left}
-.opt:hover{border-color:var(--bus)}
-.opt.sel{background:var(--bus);color:var(--ink);border-color:var(--bus)}
-.opt span{font-size:15px;opacity:.85}
-.close{margin-top:8px;padding:10px 18px;background:transparent;border:1px solid var(--line);color:var(--chalk);border-radius:6px;font:600 16px Barlow,sans-serif;cursor:pointer}
-.msg{margin-bottom:10px;color:var(--bus);font-weight:600}
-.avatar-layout{display:grid;grid-template-columns:130px 1fr;gap:16px;align-items:start}
-.avatar-preview{background:linear-gradient(#263b35,#101a17);border:1px solid var(--line);border-radius:8px;min-height:190px;display:grid;place-items:center;padding:10px}
-.avatar-preview svg{width:100%;max-height:190px}
-.section-label{color:var(--bus);font:400 21px Anton,sans-serif;margin:12px 0 7px}
-.opt small{display:block;font-size:12px;opacity:.75}
-@media(max-width:430px){.avatar-layout{grid-template-columns:90px 1fr}.avatar-preview{min-height:150px}.avatar-preview svg{max-height:150px}.card{padding:15px;max-height:90vh;overflow:auto}}
-input[type=range]{width:100%;accent-color:var(--bus)}
-#gate{position:fixed;inset:0;z-index:20;background:#0d1512;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;cursor:pointer}
-#gate p{font:600 20px Barlow,sans-serif;color:var(--bus);animation:pulse 1.6s infinite}
-@keyframes pulse{50%{opacity:.35}}
-@media (prefers-reduced-motion:reduce){.blink .lid{animation-duration:.01s}#gate p{animation:none}}
-@media (max-height:640px){main{gap:12px}.menu button{padding:8px 14px;font-size:17px}.menu .play{font-size:30px}}
-</style>
-</head>
-<body>
-<div id="bg"></div><div class="shade"></div>
-<div class="lid t"></div><div class="lid b"></div>
+```css
+/* CHARACTER LOCKER */
+#panel {
+  padding: 12px;
+}
 
-<div id="gate"><h1>Save the<span>School</span></h1><p>Click anywhere to enter the lobby</p></div>
+.card:has(.locker) {
+  width: min(900px, 96vw);
+  max-height: 94dvh;
+  overflow-y: auto;
+  padding: clamp(12px, 2.5vw, 24px);
+  background: #111820;
+  border: 2px solid #38434e;
+  border-top: 5px solid #ffc21a;
+  border-radius: 12px;
+}
 
-<button id="mute" aria-label="Toggle music">Music: on</button>
-<div id="money" aria-label="Your money"><i>$</i><b id="cash">2,450</b></div>
+.locker-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
 
-<main>
-  <h1>Save the<span>School</span></h1>
-  <nav class="menu">
-    <button class="play" id="play">Play <small id="sub"></small></button>
-    <button data-p="maps">Maps <small id="mapV"></small></button>
-    <button data-p="diff">Difficulty <small id="diffV"></small></button>
-    <button data-p="avatar">Customize Avatar <small>Hats · Shirts · Pants</small></button>
-  <button data-p="load">Loadout <small>Rifle · Pistol · Smoke</small></button>
-    <button data-p="shop">Shop</button>
-    <button onclick="location.href='schools3d.html'">Explore the schools in 3D</button>
-    <button data-p="set">Settings</button>
-  </nav>
-</main>
+.locker-title h2 {
+  font: 400 clamp(26px, 5vw, 42px)/1 Anton, sans-serif;
+  margin: 0;
+  color: #ffc21a;
+  text-transform: uppercase;
+}
 
-<div id="cap"></div><div id="dots"></div>
-<div id="panel"><div class="card" id="card"></div></div>
+.locker-title span {
+  color: #aebdca;
+  font-size: 12px;
+  font-weight: 600;
+}
 
-<script>
-/* ---------- School pictures (drawn as SVG, no image files needed) ---------- */
-const W=(x,y,c,r,w,h,gx,gy,f)=>{let s='';for(let i=0;i<c;i++)for(let j=0;j<r;j++)s+=`<rect x="${x+i*gx}" y="${y+j*gy}" width="${w}" height="${h}" fill="${f}"/>`;return s};
-const tree=(x,s=1)=>`<rect x="${x-6*s}" y="${640}" width="${12*s}" height="${60}" fill="#2b1d12"/><circle cx="${x}" cy="${620}" r="${48*s}" fill="#1f4a2b"/><circle cx="${x+30*s}" cy="${650}" r="${34*s}" fill="#235a33"/>`;
-const sky=(id,a,b)=>`<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="1600" height="900" fill="url(#${id})"/>`;
-const ground=c=>`<rect y="700" width="1600" height="200" fill="${c}"/>`;
-const svg=b=>`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
+.locker {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+}
 
-const SCHOOLS=[
-{name:"Brickwell Elementary",svg:svg(sky('s1','#7fc3e8','#fbe3b0')+`<circle cx="1250" cy="200" r="70" fill="#fff3b0"/>`+ground('#4a8a45')+
- `<rect x="320" y="470" width="960" height="230" fill="#a84a33"/><rect x="720" y="300" width="160" height="400" fill="#b5553b"/><polygon points="700,300 800,210 900,300" fill="#4a2b24"/>
-  <circle cx="800" cy="360" r="40" fill="#f3efe2" stroke="#3a2a22" stroke-width="6"/><path d="M800 335V362H820" stroke="#3a2a22" stroke-width="6" fill="none"/>`+
-  W(360,505,5,2,60,60,80,95,'#cfe6f0')+W(900,505,5,2,60,60,80,95,'#cfe6f0')+
-  `<rect x="765" y="590" width="70" height="110" fill="#3a2a22"/><rect x="320" y="460" width="960" height="14" fill="#7d3524"/>`+tree(180)+tree(1440,1.1)+tree(110,.8))},
-{name:"Hillcrest High",svg:svg(sky('s2','#ff8f5a','#ffd9a0')+`<circle cx="400" cy="560" r="110" fill="#ffe9b8" opacity=".9"/>`+ground('#3d6b3a')+
- `<rect x="260" y="520" width="1080" height="180" fill="#cfd4d6"/><rect x="520" y="400" width="560" height="120" fill="#e5e8e8"/><rect x="250" y="508" width="1100" height="16" fill="#5a6468"/><rect x="510" y="390" width="580" height="14" fill="#5a6468"/>`+
-  `<rect x="540" y="425" width="520" height="70" fill="#4d8aa6"/>`+W(290,550,10,1,70,90,105,0,'#4d8aa6')+W(300,580,0,0,0,0,0,0,'')+
-  `<rect x="740" y="600" width="120" height="100" fill="#26363c"/><rect x="1230" y="360" width="10" height="160" fill="#444"/><rect x="1240" y="364" width="70" height="44" fill="#d23b3b"/>`+
-  `<rect x="0" y="700" width="1600" height="30" fill="#2e4f2c"/>`+tree(150)+tree(1480,1.2))},
-{name:"Oakvale Academy",svg:svg(sky('s3','#a6d8f0','#f4f1e6')+ground('#5a9a4c')+
- `<rect x="260" y="500" width="1080" height="200" fill="#ece6d4"/><polygon points="540,420 800,300 1060,420" fill="#d8cfb6"/><rect x="540" y="420" width="520" height="30" fill="#ece6d4"/>`+
-  [0,1,2,3,4,5].map(i=>`<rect x="${560+i*90}" y="450" width="34" height="250" fill="#fffaf0" stroke="#b9ae92" stroke-width="3"/>`).join('')+
-  `<circle cx="800" cy="385" r="26" fill="#4d7aa6"/>`+W(290,540,3,2,55,70,75,90,'#4d7aa6')+W(1110,540,3,2,55,70,75,90,'#4d7aa6')+
-  `<rect x="720" y="640" width="160" height="14" fill="#cfc7b0"/><rect x="700" y="660" width="200" height="14" fill="#c4bba2"/><rect x="680" y="680" width="240" height="20" fill="#b9af95"/>`+
-  `<rect x="1400" y="260" width="8" height="440" fill="#666"/><path d="M1408 266h90v52h-90z" fill="#3158a6"/><path d="M1408 266h90v10h-90zM1408 296h90v10h-90z" fill="#d23b3b"/>`+tree(160,1.1)+tree(1500,.9))},
-{name:"Lakeside Middle School",svg:svg(sky('s4','#4b4f9c','#f79a6a')+`<circle cx="800" cy="470" r="90" fill="#ffd9a0"/>`+
-  `<rect y="700" width="1600" height="200" fill="#2d5f7c"/><rect y="700" width="1600" height="6" fill="#ffd9a0" opacity=".6"/>`+
-  `<rect x="300" y="520" width="700" height="170" fill="#c9b79c"/><rect x="290" y="508" width="720" height="16" fill="#6d5a45"/>`+W(330,555,8,2,48,50,82,70,'#ffe2a0')+
-  `<path d="M1040 690V560a160 130 0 0 1 320 0V690z" fill="#b8493d"/><rect x="1040" y="620" width="320" height="10" fill="#8a3329"/><rect x="1170" y="630" width="60" height="60" fill="#3a2a22"/>`+
-  `<path d="M300 700h700v90H300z" fill="#c9b79c" opacity=".25"/><path d="M1040 700h320v80h-320z" fill="#b8493d" opacity=".25"/>`+tree(150,1.1)+tree(1480))},
-{name:"St. Mary's Academy",svg:svg(sky('s5','#0b1030','#34407a')+
-  [[120,90],[300,160],[520,60],[700,120],[980,70],[1180,150],[1400,80],[1500,200],[850,200],[220,260]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#fff"/>`).join('')+
-  `<circle cx="1250" cy="170" r="60" fill="#f6f1d6"/><circle cx="1275" cy="155" r="55" fill="#0f1536" opacity=".25"/>`+ground('#1d3a2a')+
-  `<rect x="380" y="480" width="840" height="220" fill="#4b4a58"/><rect x="720" y="260" width="160" height="440" fill="#575666"/><polygon points="710,262 800,60 890,262" fill="#30303c"/><rect x="796" y="20" width="8" height="50" fill="#d8d2b0"/><rect x="782" y="32" width="36" height="8" fill="#d8d2b0"/>`+
-  [[380,0],[1140,0]].map(p=>`<polygon points="${p[0]},480 ${p[0]+40},400 ${p[0]+80},480" fill="#30303c"/>`).join('')+
-  `<path d="M770 380a30 40 0 0 1 60 0v40h-60z" fill="#ffd36a"/>`+
-  [420,520,620,940,1040,1140].map(x=>`<path d="M${x} 600v-60a22 32 0 0 1 44 0v60z" fill="#ffd36a"/>`).join('')+
-  `<path d="M770 700V600a30 40 0 0 1 60 0V700z" fill="#2a2018"/>`+tree(190,1.1)+tree(1420))}
-];
+.locker-preview {
+  position: relative;
+  min-height: 330px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #354452;
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at 50% 40%, #425c70 0%, #253747 45%, #151d27 100%);
+}
 
-/* ---------- Background rotator with blink ---------- */
-const bg=document.getElementById('bg'),dots=document.getElementById('dots'),cap=document.getElementById('cap'),root=document.body;
-let cur=0,timer;
-bg.innerHTML=SCHOOLS.map(s=>s.svg).join('');
-const imgs=[...bg.children];
-dots.innerHTML=SCHOOLS.map(()=>'<b></b>').join('');
-function show(i){
-  imgs.forEach((e,k)=>e.classList.toggle('on',k===i));
-  [...dots.children].forEach((e,k)=>e.classList.toggle('on',k===i));
-  cap.textContent=SCHOOLS[i].name;cur=i;
+.locker-preview::before {
+  content: "CHARACTER PREVIEW";
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #c6d5e2;
 }
-function blinkTo(i){
-  root.classList.remove('blink');void root.offsetWidth;root.classList.add('blink');
-  setTimeout(()=>show(i),250);
-  setTimeout(()=>root.classList.remove('blink'),520);
-}
-function startCycle(){clearInterval(timer);timer=setInterval(()=>blinkTo((cur+1)%SCHOOLS.length),5000)}
-show(0);startCycle();
 
-/* ---------- Game state + menu panels ---------- */
-const DIFFS=[["Easy","Fewer intruders, slow reactions"],["Normal","The standard school day"],["Hard","More intruders, better aim"],["Nightmare","Detention for life"]];
-const state={
-  map:0,diff:1,cash:2450,
-  avatar:{hat:"Baseball Cap",shirt:"Field Jacket",pants:"Cargo Pants"},
-  loadout:{primary:"Rifle",secondary:"Pistol",gadget:"Smoke Bomb"},
-  owned:{Rifle:1,Pistol:1,"Smoke Bomb":1}
-};
-const AVATAR_OPTIONS={
-  hat:["Baseball Cap","Beanie","Bucket Hat","Cowboy Hat","Hard Hat","Crown","No Hat"],
-  shirt:["Field Jacket","Hoodie","T-Shirt"],
-  pants:["Cargo Pants","Jeans","Track Pants"]
-};
-const GEAR_OPTIONS={
-  primary:[["Rifle","Standard rifle"]],
-  secondary:[["Pistol","Standard sidearm"]],
-  gadget:[["Smoke Bomb","Creates a smoke cloud"]]
-};
-const SHOP=[["Pistol",300],["Shotgun",900],["Sniper",1500],["Armor vest",600]];
-const $=id=>document.getElementById(id),card=$('card'),panel=$('panel');
-const fmt=n=>n.toLocaleString('en-US');
-function refresh(){$('cash').textContent=fmt(state.cash);$('mapV').textContent=SCHOOLS[state.map].name;$('diffV').textContent=DIFFS[state.diff][0];$('sub').textContent=SCHOOLS[state.map].name+' · '+DIFFS[state.diff][0]}
-function open(html){card.innerHTML=html+'<button class="close" id="x">Back to lobby</button>';panel.classList.add('open');$('x').onclick=closeP;$('x').focus()}
-function closeP(){panel.classList.remove('open')}
-panel.onclick=e=>{if(e.target===panel)closeP()};
-addEventListener('keydown',e=>{if(e.key==='Escape')closeP()});
+.locker-preview svg {
+  width: min(80%, 230px);
+  max-height: 290px;
+  filter: drop-shadow(0 12px 8px #0008);
+  z-index: 1;
+}
 
-function mapsP(){
-  open('<h2>Choose a map</h2>'+SCHOOLS.map((s,i)=>`<button class="opt ${i===state.map?'sel':''}" data-i="${i}">${s.name}<span>${i===state.map?'Selected':'Select'}</span></button>`).join(''));
-  card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{state.map=+b.dataset.i;clearInterval(timer);blinkTo(state.map);startCycle();refresh();mapsP()});
+.locker-preview::after {
+  content: "";
+  position: absolute;
+  width: 65%;
+  height: 12px;
+  bottom: 35px;
+  border-radius: 50%;
+  background: #0006;
+  filter: blur(8px);
 }
-function diffP(){
-  open('<h2>Difficulty</h2>'+DIFFS.map((d,i)=>`<button class="opt ${i===state.diff?'sel':''}" data-i="${i}">${d[0]}<span>${d[1]}</span></button>`).join(''));
-  card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{state.diff=+b.dataset.i;refresh();diffP()});
-}
-function avatarSvg(){
-  const hats={"Baseball Cap":'<path d="M35 39 Q50 18 66 39 L76 43 L39 45Z" fill="#ffc21a"/><path d="M57 40 L80 45 L59 47Z" fill="#d99a00"/>',
-    "Beanie":'<path d="M35 42 Q35 18 51 20 Q68 20 68 42Z" fill="#b84b3a"/><path d="M35 40H68V46H35Z" fill="#e4d8bd"/>',
-    "Bucket Hat":'<path d="M37 28 L65 28 L70 43 L31 43Z" fill="#4c8c65"/><path d="M29 42H73V47H29Z" fill="#2e5c42"/>',
-    "Cowboy Hat":'<path d="M40 26 Q51 20 62 26 L67 41 L35 41Z" fill="#a96c3d"/><path d="M26 40 Q50 34 76 40 L73 45H29Z" fill="#7c4828"/>',
-    "Hard Hat":'<path d="M34 39 Q35 19 51 19 Q67 19 68 39Z" fill="#f5d442"/><path d="M29 39H73V45H29Z" fill="#d6a91b"/><path d="M48 20V38" stroke="#fff0a0" stroke-width="3"/>',
-    "Crown":'<path d="M34 28 L42 36 L51 22 L61 36 L69 28 L66 44H37Z" fill="#ffc21a" stroke="#f3efe2" stroke-width="1.5"/>',
-    "No Hat":""};
-  const shirts={"Field Jacket":"#526b4c","Hoodie":"#477a9b","T-Shirt":"#b84b3a"};
-  const pants={"Cargo Pants":"#8a805c","Jeans":"#41658a","Track Pants":"#333d45"};
-  return `<svg viewBox="0 0 100 160" role="img" aria-label="Avatar preview">
-    <ellipse cx="51" cy="151" rx="28" ry="5" fill="#000" opacity=".35"/>
-    <path d="M37 99 L34 143 L48 143 L51 111 L55 143 L69 143 L65 99Z" fill="${pants[state.avatar.pants]}"/>
-    <path d="M35 64 L24 70 L18 98 L28 101 L36 82 L36 111 L66 111 L66 82 L74 101 L84 97 L77 70 L65 64Z" fill="${shirts[state.avatar.shirt]}"/>
-    <path d="M36 65 L50 74 L65 65 L61 59 L40 59Z" fill="#d5a47a"/>
-    <rect x="40" y="42" width="22" height="25" rx="8" fill="#d5a47a"/>
-    <circle cx="44" cy="51" r="1.5" fill="#20231f"/><circle cx="57" cy="51" r="1.5" fill="#20231f"/>
-    <path d="M45 59 Q51 62 57 59" fill="none" stroke="#8b4d3c" stroke-width="1.5"/>
-    ${hats[state.avatar.hat]}
-    <path d="M36 143H49V149H33Z M55 143H69V149H54Z" fill="#1d2524"/>
-  </svg>`;
-}
-function avatarP(){
-  const options=(key,label)=>`<div class="section-label">${label}</div>`+AVATAR_OPTIONS[key].map(n=>`<button class="opt ${state.avatar[key]===n?'sel':''}" data-avatar="${key}" data-n="${n}">${n}<span>${state.avatar[key]===n?'Wearing':'Wear'}</span></button>`).join('');
-  open(`<h2>Customize Avatar</h2><div class="avatar-layout"><div class="avatar-preview" id="avatarPreview">${avatarSvg()}</div><div>${options('hat','Hats')}${options('shirt','Shirts')}${options('pants','Pants')}</div></div>`);
-  card.querySelectorAll('[data-avatar]').forEach(b=>b.onclick=()=>{state.avatar[b.dataset.avatar]=b.dataset.n;avatarP()});
-}
-function loadP(){
-  const labels={primary:"Primary Weapon",secondary:"Secondary Weapon",gadget:"Gadget"};
-  const groups=Object.keys(GEAR_OPTIONS).map(key=>`<div class="section-label">${labels[key]}</div>`+
-    GEAR_OPTIONS[key].map(([n,desc])=>`<button class="opt ${state.loadout[key]===n?'sel':''}" data-slot="${key}" data-n="${n}">${n}<span>${state.loadout[key]===n?'Equipped':'Equip'}</span><small>${desc}</small></button>`).join('')).join('');
-  open(`<h2>Loadout</h2><p class="msg">Choose your gear for the next match.</p>${groups}`);
-  card.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{state.loadout[b.dataset.slot]=b.dataset.n;loadP();document.querySelector('[data-p=load] small').textContent=state.loadout.primary+' · '+state.loadout.secondary+' · Smoke'});
-}
-function shopP(msg=''){
-  open('<h2>Shop</h2>'+(msg?`<p class="msg">${msg}</p>`:'')+SHOP.map(([n,p])=>`<button class="opt" data-n="${n}" data-p="${p}">${n}<span>${state.owned[n]?'Owned':'$'+fmt(p)}</span></button>`).join(''));
-  card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
-    const n=b.dataset.n,p=+b.dataset.p;
-    if(state.owned[n])return shopP('You already own the '+n+'.');
-    if(state.cash<p)return shopP('Not enough money for the '+n+'.');
-    state.cash-=p;state.owned[n]=1;refresh();shopP('Bought the '+n+'. Equip it in Loadout.');
-  });
-}
-function setP(){
-  open(`<h2>Settings</h2><p class="msg">Music volume</p><input type="range" id="vol" min="0" max="100" value="${Math.round(vol*100)}">`);
-  $('vol').oninput=e=>{vol=e.target.value/100;if(master)master.gain.value=muted?0:vol}
-}
-const P={maps:mapsP,diff:diffP,load:loadP,avatar:avatarP,shop:()=>shopP(),set:setP};
-document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>P[b.dataset.p]());
-$('play').onclick=()=>open(`<h2>Finding a match…</h2><p class="msg">${SCHOOLS[state.map].name} · ${DIFFS[state.diff][0]} · ${state.loadout.primary} · ${state.loadout.secondary} · ${state.loadout.gadget}</p><p>The game itself isn't built yet. Hook your match start here.</p>`);
-refresh();
 
-/* ---------- Lobby music (generated live with Web Audio) ---------- */
-let ac,master,vol=.5,muted=false,step=0,nextT=0,ticker;
-const BPM=84,S=60/BPM/4;
-const N=m=>440*Math.pow(2,(m-69)/12);
-const CH=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]];      // Am F C G
-const BASS=[45,41,36,43];
-function tone(f,t,d,type,g,lp){
-  const o=ac.createOscillator(),a=ac.createGain(),fl=ac.createBiquadFilter();
-  o.type=type;o.frequency.value=f;fl.type='lowpass';fl.frequency.value=lp;
-  a.gain.setValueAtTime(0,t);a.gain.linearRampToValueAtTime(g,t+Math.min(.04,d/3));a.gain.exponentialRampToValueAtTime(.0001,t+d);
-  o.connect(fl).connect(a).connect(master);o.start(t);o.stop(t+d+.05);
+.locker-items {
+  min-width: 0;
 }
-function drum(t,kick){
-  const o=ac.createOscillator(),a=ac.createGain();
-  if(kick){o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(40,t+.12);a.gain.setValueAtTime(.55,t);a.gain.exponentialRampToValueAtTime(.001,t+.25);o.connect(a).connect(master);o.start(t);o.stop(t+.3)}
-  else{const b=ac.createBuffer(1,ac.sampleRate*.05,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);
-    const s=ac.createBufferSource(),h=ac.createBiquadFilter();h.type='highpass';h.frequency.value=7000;s.buffer=b;a.gain.value=.12;s.connect(h).connect(a).connect(master);s.start(t)}
+
+.locker-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 12px;
 }
-function sched(){
-  while(nextT<ac.currentTime+.25){
-    const bar=Math.floor(step/16)%4,k=step%16,ch=CH[bar];
-    if(k===0){ch.forEach(m=>tone(N(m),nextT,S*16,'triangle',.07,900));tone(N(BASS[bar]),nextT,S*8,'sine',.22,400);}
-    if(k===10)tone(N(BASS[bar]),nextT,S*4,'sine',.16,400);
-    if(k%2===0){const n=ch[(k/2)%3]+12+(k%8===6?12:0);tone(N(n),nextT,S*3,'sine',.09,2200)}
-    if(k%8===0||k===10)drum(nextT,true);
-    if(k%4===2)drum(nextT,false);
-    if(k===8&&bar%2===1)tone(N(ch[2]+24),nextT,S*7,'triangle',.05,3000);
-    nextT+=S;step++;
+
+.locker-tab {
+  min-width: 0;
+  padding: 12px 4px;
+  border: 1px solid #465461;
+  border-radius: 6px;
+  background: #202b36;
+  color: #dce6ed;
+  font: 400 clamp(13px, 2vw, 18px) Anton, sans-serif;
+  cursor: pointer;
+}
+
+.locker-tab.active {
+  background: #ffc21a;
+  color: #101820;
+  border-color: #ffc21a;
+}
+
+.locker-tab:hover {
+  border-color: #ffc21a;
+}
+
+.locker-category {
+  color: #aebdca;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin: 8px 0;
+}
+
+.locker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.locker-item {
+  min-width: 0;
+  min-height: 76px;
+  padding: 10px 6px;
+  border: 2px solid #354452;
+  border-radius: 7px;
+  background: #202b36;
+  color: #edf3f7;
+  font: 600 13px Barlow, sans-serif;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.locker-item:hover {
+  background: #303e4c;
+  border-color: #9baab7;
+}
+
+.locker-item.selected {
+  background: #344331;
+  border-color: #ffc21a;
+  box-shadow: inset 0 0 0 1px #ffc21a;
+}
+
+.locker-item .item-icon {
+  display: block;
+  font-size: 23px;
+  margin-bottom: 5px;
+}
+
+.locker-item .item-status {
+  display: block;
+  margin-top: 5px;
+  color: #ffc21a;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.locker-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.locker-equipped {
+  color: #b9c7d2;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.locker-done {
+  flex-shrink: 0;
+  padding: 12px 25px;
+  border: 0;
+  border-radius: 6px;
+  background: #ffc21a;
+  color: #111820;
+  font: 400 22px Anton, sans-serif;
+  cursor: pointer;
+}
+
+.locker-done:hover {
+  background: #ffda61;
+}
+
+@media (max-width: 600px) {
+  .card:has(.locker) {
+    width: 98vw;
+    max-height: 96dvh;
+    padding: 12px;
+  }
+
+  .locker {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 9px;
+  }
+
+  .locker-preview {
+    min-height: 240px;
+  }
+
+  .locker-preview svg {
+    width: 95%;
+    max-height: 210px;
+  }
+
+  .locker-item {
+    min-height: 68px;
+    padding: 7px 3px;
+    font-size: 11px;
+  }
+
+  .locker-item .item-icon {
+    font-size: 19px;
+  }
+
+  .locker-tab {
+    padding: 10px 2px;
+    font-size: 12px;
+  }
+
+  .locker-footer {
+    align-items: stretch;
+  }
+
+  .locker-equipped {
+    font-size: 10px;
+  }
+
+  .locker-done {
+    padding: 10px 16px;
+    font-size: 18px;
   }
 }
-function startMusic(){
-  if(ac)return;
-  ac=new (window.AudioContext||window.webkitAudioContext)();
-  master=ac.createGain();master.gain.value=vol;
-  const dly=ac.createDelay(),fb=ac.createGain(),wet=ac.createGain();dly.delayTime.value=S*3;fb.gain.value=.35;wet.gain.value=.3;
-  master.connect(ac.destination);master.connect(dly);dly.connect(fb).connect(dly);dly.connect(wet).connect(ac.destination);
-  nextT=ac.currentTime+.1;ticker=setInterval(sched,60);
+
+@media (max-height: 520px) {
+  .locker-preview {
+    min-height: 180px;
+  }
+
+  .locker-preview svg {
+    max-height: 160px;
+  }
+
+  .locker-item {
+    min-height: 55px;
+    padding: 4px;
+  }
+
+  .locker-item .item-icon {
+    font-size: 17px;
+    margin-bottom: 2px;
+  }
 }
-$('gate').onclick=()=>{startMusic();$('gate').style.display='none'};
-$('mute').onclick=()=>{muted=!muted;if(master)master.gain.value=muted?0:vol;$('mute').textContent='Music: '+(muted?'off':'on')};
-</script>
-</body>
-</html>
+```
